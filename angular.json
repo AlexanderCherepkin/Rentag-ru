@@ -13,30 +13,27 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-          "outputPath": "dist/webapp",
-          "index": "src/index.html",
-          "browser": "src/main.ts",
-          "polyfills": ["zone.js"],
-          "tsConfig": "tsconfig.app.json",
-          "assets": [
-            "src/favicon.ico",
-            "src/assets",
-            "src/manifest.webmanifest",
-            {
-              "glob": "push-sw.js",
-              "input": "src",
-              "output": "/push/"
-            },
-            "src/manifest.webmanifest",
-            "src/manifest.webmanifest"
-          ],
-          "styles": ["src/styles.css"],
-          "scripts": [],
-          "server": "src/main.server.ts",
-          "prerender": true,
-          "ssr": { "entry": "server.ts" },
-          "serviceWorker": "ngsw-config.json"
-        },
+            "outputPath": "dist/webapp",
+            "index": "src/index.html",
+            "browser": "src/main.ts",
+            "server": "src/main.server.ts",
+            "polyfills": ["zone.js"],
+            "tsConfig": "tsconfig.app.json",
+            "assets": [
+              "src/favicon.ico",
+              "src/assets",
+              "src/manifest.webmanifest",
+              {
+                "glob": "push-sw.js",
+                "input": "src",
+                "output": "/push/"
+              }
+            ],
+            "styles": ["src/styles.css"],
+            "scripts": [],
+            "prerender": true,
+            "ssr": { "entry": "server.ts" }
+          },
           "configurations": {
             "production": {
               "budgets": [
@@ -49,13 +46,22 @@
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "serviceWorker": false
             }
           },
           "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": { "buildTarget": "webapp:build:production" },
+            "development": { "buildTarget": "webapp:build:development" }
+          },
+          "defaultConfiguration": "development"
+        },
+        "serve-ssr": {
+          "builder": "@angular-devkit/build-angular:ssr-dev-server",
           "configurations": {
             "production": { "buildTarget": "webapp:build:production" },
             "development": { "buildTarget": "webapp:build:development" }
@@ -78,10 +84,8 @@
               {
                 "glob": "push-sw.js",
                 "input": "src",
-                "output": "/"
-              },
-              "src/manifest.webmanifest",
-              "src/manifest.webmanifest"
+                "output": "/push/"
+              }
             ],
             "styles": ["src/styles.css"],
             "scripts": []

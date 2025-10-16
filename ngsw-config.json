@@ -25,6 +25,28 @@
           "/media/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"
         ]
       }
-    }
-  ]
+    }    
+  ],
+    "dataGroups": [
+      {
+        "name": "api-prod",
+        "urls": ["https://api.rentag.ru/**"],
+        "cacheConfig": {
+          "strategy": "freshness",
+          "maxSize": 100,
+          "maxAge": "1h",
+          "timeout": "10s"
+        }
+      },
+      {
+        "name": "api-dev",
+        "urls": ["http://localhost:3000/**"],
+        "cacheConfig": {
+          "strategy": "performance",
+          "maxSize": 50,
+          "maxAge": "10m",
+          "timeout": "5s"
+        }
+      }
+    ]
 }
