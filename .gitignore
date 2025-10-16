@@ -40,3 +40,14 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+# --- secrets / env ---
+.env
+.env.*
+!.env.example
+*.pem
+*.p8
+*.p12
+*.key
+vapid-*.json
+firebase-*.json
+secret*.json
