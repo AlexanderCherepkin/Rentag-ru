@@ -51,3 +51,7 @@ Thumbs.db
 vapid-*.json
 firebase-*.json
 secret*.json
+
+# secrets
+.env
+webapp/.env

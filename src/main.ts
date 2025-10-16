@@ -17,13 +17,23 @@ bootstrapApplication(AppComponent, {
       registrationStrategy: 'registerWhenStable:30000'
     }),
   ]
+}).then(() => {
+  // Кастомный push-SW (отдельная scope, не конфликтует с NGSW)
+  if ('serviceWorker' in navigator) {
+    // Регистрируем после onload — твой вариант корректный
+    window.addEventListener('load', async () => {
+      try {
+        // опционально: избегаем лишней повторной регистрации
+        const existing = await navigator.serviceWorker.getRegistration('/push/');
+        if (!existing) {
+          await navigator.serviceWorker.register('/push/push-sw.js', { scope: '/push/' });
+          // console.log('[push-sw] registered');
+        } else {
+          // console.log('[push-sw] already registered');
+        }
+      } catch (err) {
+        console.error('push sw register:', err);
+      }
+    });
+  }
 }).catch(err => console.error(err));
-
-// Кастомный push-SW (ОТДЕЛЬНЫЙ scope, не конфликтует с NGSW)
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker
-      .register('/push/push-sw.js', { scope: '/push/' })
-      .catch(err => console.error('push sw register:', err));
-  });
-}
