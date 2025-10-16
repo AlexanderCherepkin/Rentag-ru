@@ -1,0 +1,25 @@
+<section class="nc">
+  <header class="nc__header">
+    <h1>Центр уведомлений</h1>
+    <div class="nc__actions">
+      <button (click)="subscribe()">Включить пуш</button>
+      <button (click)="testPush()">Тестовое уведомление</button>
+      <button (click)="clear()">Очистить</button>
+    </div>
+  </header>
+
+  <div class="nc__list" *ngIf="notifications().length; else empty">
+    <article class="nc__item" *ngFor="let n of notifications()">
+      <img *ngIf="n.icon" [src]="n.icon" alt="" class="nc__icon" />
+      <div class="nc__body">
+        <h2>{{ n.title }}</h2>
+        <p *ngIf="n.body">{{ n.body }}</p>
+        <small>{{ n.timestamp | date:'short' }}</small>
+      </div>
+    </article>
+  </div>
+
+  <ng-template #empty>
+    <p class="nc__empty">Пока нет уведомлений.</p>
+  </ng-template>
+</section>
