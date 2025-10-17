@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { NotificationsCenterComponent } from './notification-center/notification-center.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, NotificationsCenterComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrls: ['./app.component.css'] // ← фикс: было styleUrl
 })
 export class AppComponent {
-  title = 'webapp';
+  title = 'webapp'; // можно оставить; если в шаблоне не используется — смело удаляй
 }

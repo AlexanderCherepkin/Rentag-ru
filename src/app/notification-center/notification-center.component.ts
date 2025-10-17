@@ -1,5 +1,5 @@
-import { Component, OnInit, OnDestroy, signal } from '@angular/core';
-import { NgIf, NgFor, DatePipe } from '@angular/common';
+import { Component, OnInit, OnDestroy, signal, inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, DatePipe, isPlatformBrowser } from '@angular/common';
 import { PushSubscriptionService } from '../services/push-subscription.service';
 
 interface UINotification {
@@ -13,12 +13,15 @@ interface UINotification {
 @Component({
   selector: 'app-notifications-center',
   standalone: true,
-  imports: [NgIf, NgFor, DatePipe],
-  templateUrl: './notifications-center.component.html',
-  styleUrls: ['./notifications-center.component.css']
+  imports: [CommonModule, DatePipe],
+  templateUrl: './notification-center.component.html',
+  styleUrls: ['./notification-center.component.css']
 })
 export class NotificationsCenterComponent implements OnInit, OnDestroy {
   readonly notifications = signal<UINotification[]>([]);
+
+  // ✅ определяемся с платформой один раз
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
   private onMessage = (event: MessageEvent) => {
     const msg = event.data;
@@ -35,11 +38,36 @@ export class NotificationsCenterComponent implements OnInit, OnDestroy {
 
   constructor(private push: PushSubscriptionService) {}
 
-  ngOnInit()  { if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', this.onMessage); }
-  ngOnDestroy(){ if ('serviceWorker' in navigator) navigator.serviceWorker.removeEventListener('message', this.onMessage); }
+  // ✅ не трогаем navigator на сервере
+  ngOnInit() {
+    if (
+      this.isBrowser &&
+      typeof navigator !== 'undefined' &&
+      'serviceWorker' in navigator
+    ) {
+      navigator.serviceWorker.addEventListener('message', this.onMessage);
+    }
+  }
 
-  subscribe() { this.push.subscribe(); }
-  testPush()  { this.push.test(location.pathname); }
+  ngOnDestroy() {
+    if (
+      this.isBrowser &&
+      typeof navigator !== 'undefined' &&
+      'serviceWorker' in navigator
+    ) {
+      navigator.serviceWorker.removeEventListener('message', this.onMessage);
+    }
+  }
+
+  subscribe() { if (this.isBrowser) this.push.subscribe(); }
+
+  // ✅ не используем location на сервере
+  testPush()  {
+    if (!this.isBrowser) return;
+    const path = globalThis.location?.pathname ?? '/';
+    this.push.test(path);
+  }
+
   clear()     { this.notifications.set([]); }
 
   private add(n: UINotification) {

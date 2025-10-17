@@ -19,15 +19,12 @@
             "server": "src/main.server.ts",
             "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
+            "serviceWorker": "ngsw-config.json",
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/manifest.webmanifest",
-              {
-                "glob": "push-sw.js",
-                "input": "src",
-                "output": "/push/"
-              }
+              { "glob": "manifest.webmanifest", "input": "src", "output": "/" },
+              { "glob": "push-sw.js", "input": "src", "output": "/push/" }
             ],
             "styles": ["src/styles.css"],
             "scripts": [],
@@ -40,9 +37,7 @@
                 { "type": "initial", "maximumWarning": "500kb", "maximumError": "1mb" },
                 { "type": "anyComponentStyle", "maximumWarning": "2kb", "maximumError": "4kb" }
               ],
-              "outputHashing": "all",
-              "serviceWorker": true,
-              "ngswConfigPath": "ngsw-config.json"
+              "outputHashing": "all"
             },
             "development": {
               "optimization": false,
@@ -53,26 +48,62 @@
           },
           "defaultConfiguration": "production"
         },
+
+        "server": {
+          "builder": "@angular-devkit/build-angular:server",
+          "options": {
+            "outputPath": "dist/webapp/server",
+            "main": "server.ts",
+            "tsConfig": "tsconfig.server.json"
+          },
+          "configurations": {
+            "production": {
+              "sourceMap": false,
+              "outputHashing": "media"
+            },
+            "development": {
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "webapp:build:development"
+          },
           "configurations": {
-            "production": { "buildTarget": "webapp:build:production" },
-            "development": { "buildTarget": "webapp:build:development" }
+            "production":  { "browserTarget": "webapp:build:production"  },
+            "development": { "browserTarget": "webapp:build:development" }
           },
           "defaultConfiguration": "development"
         },
+
         "serve-ssr": {
           "builder": "@angular-devkit/build-angular:ssr-dev-server",
+          "options": {
+            "browserTarget": "webapp:build:development",
+            "serverTarget":  "webapp:server:development"
+          },
           "configurations": {
-            "production": { "buildTarget": "webapp:build:production" },
-            "development": { "buildTarget": "webapp:build:development" }
+            "production":  {
+              "browserTarget": "webapp:build:production",
+              "serverTarget":  "webapp:server:production"
+            },
+            "development": {
+              "browserTarget": "webapp:build:development",
+              "serverTarget":  "webapp:server:development"
+            }
           },
           "defaultConfiguration": "development"
         },
+
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": { "buildTarget": "webapp:build" }
         },
+
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
@@ -81,12 +112,8 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/manifest.webmanifest",
-              {
-                "glob": "push-sw.js",
-                "input": "src",
-                "output": "/push/"
-              }
+              { "glob": "manifest.webmanifest", "input": "src", "output": "/" },
+              { "glob": "push-sw.js", "input": "src", "output": "/push/" }
             ],
             "styles": ["src/styles.css"],
             "scripts": []
@@ -95,7 +122,5 @@
       }
     }
   },
-  "cli": {
-    "analytics": "3683f3d2-0a36-4d68-bb2f-491624071b96"
-  }
+  "cli": { "analytics": "3683f3d2-0a36-4d68-bb2f-491624071b96" }
 }
