@@ -1,42 +1,60 @@
-self.addEventListener('push', (event) => {
-  const data = (() => {
-    try { return event.data?.json() ?? {}; }
-    catch { try { return JSON.parse(event.data?.text() || '{}'); } catch { return {}; } }
-  })();
+// /src/push/push-sw.js
 
-  const title = data.title || 'Rentag';
-  const options = {
-    body: data.body || '',
-    icon: data.icon || '/assets/icons/icon-192x192.png',
-    badge: data.badge || '/assets/icons/badge-72x72.png',
-    tag: data.tag,
-    data: data.data || {},
-    actions: data.actions || []
+/* Быстрая активация воркера */
+self.addEventListener('install', () => self.skipWaiting());
+self.addEventListener('activate', (e) => e.waitUntil(clients.claim()));
+
+/* Обработка PUSH + отправка payload во все открытые окна */
+self.addEventListener('push', (event) => {
+  const run = async () => {
+    let data = {};
+    try {
+      data = event.data ? event.data.json() : {};
+    } catch {
+      data = { body: event.data?.text() };
+    }
+
+    const title = data.title || 'Уведомление';
+    const body  = data.body  || 'Нет текста';
+    const url   = data.url   || '/';
+    const icon  = data.icon  || '/assets/icons/icon-192x192.png';
+
+    const options = {
+      body,
+      data: { url },
+      icon,
+      badge: '/assets/icons/icon-72x72.png'
+    };
+
+    await self.registration.showNotification(title, options);
+
+    // Рассылаем payload во все клиентские окна
+    const list = await clients.matchAll({ type: 'window', includeUncontrolled: true });
+    for (const client of list) {
+      client.postMessage({
+        type: 'PUSH_PAYLOAD',
+        payload: { title, body, url, icon }
+      });
+    }
   };
 
-  event.waitUntil((async () => {
-    // если нет разрешения — не вызываем showNotification, только шлём событие в приложение
-    if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
-      await self.registration.showNotification(title, options);
-    }
-    try {
-      const bc = new BroadcastChannel('push-events');
-      bc.postMessage({ type: 'PUSH_MESSAGE', payload: { title, body: options.body, icon: options.icon, data: options.data } });
-      bc.close();
-    } catch {
-      const cl = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
-      cl.forEach(c => c.postMessage({ type: 'PUSH_MESSAGE', payload: { title, body: options.body, icon: options.icon, data: options.data } }));
-    }
-  })());
+  event.waitUntil(run());
 });
 
+/* Клик по уведомлению — фокусируем/открываем вкладку и переходим по url */
 self.addEventListener('notificationclick', (event) => {
-  const url = event.notification?.data?.url || '/notifications';
   event.notification.close();
+  const url = event.notification.data?.url || '/';
+
   event.waitUntil((async () => {
-    try { const bc = new BroadcastChannel('push-events'); bc.postMessage({ type: 'OPEN_DEEPLINK', payload: { url } }); bc.close(); } catch {}
-    const wins = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
-    for (const w of wins) { try { await w.focus(); await w.navigate(url); return; } catch {} }
-    await self.clients.openWindow(url);
+    const all = await clients.matchAll({ type: 'window', includeUncontrolled: true });
+    const sameOrigin = all.find(c => new URL(c.url).origin === self.location.origin);
+
+    if (sameOrigin) {
+      await sameOrigin.focus();
+      sameOrigin.navigate(url);
+    } else {
+      await clients.openWindow(url);
+    }
   })());
 });

@@ -1,9 +1,116 @@
-.nc { max-width: 48rem; margin: 0 auto; padding: 1rem; }
-.nc__header { display:flex; align-items:center; justify-content:space-between; gap:1rem; }
-.nc__actions button { margin-inline:0.25rem; }
-.nc__list { display:grid; gap:0.75rem; margin-top:1rem; }
-.nc__item { display:flex; gap:0.75rem; padding:0.75rem; border:1px solid #e5e7eb; border-radius:0.75rem; background:#fff; }
-.nc__icon { width:2.5rem; height:2.5rem; border-radius:0.5rem; }
-.nc__body h2 { margin:0 0 0.25rem; font-size:1rem; }
-.nc__body p { margin:0 0 0.25rem; color:#374151; }
-.nc__empty { text-align:center; color:#6b7280; padding:2rem 0; }
+/* Notifications Center (nc) — drop-in улучшенная версия */
+.nc {
+  /* tokens */
+  --nc-max: 48rem;
+  --nc-space-1: 1rem;
+  --nc-space-2: 0.75rem;
+  --nc-radius: 0.75rem;
+  --nc-icon: 2.5rem;
+  --nc-border: #e5e7eb;
+  --nc-bg: #ffffff;
+  --nc-text: #111827;
+  --nc-muted: #374151;
+  --nc-muted-2: #6b7280;
+  --nc-focus: rgba(59, 130, 246, 0.45); /* синий ring */
+  color-scheme: light dark;
+
+  max-width: var(--nc-max);
+  margin: 0 auto;
+  padding: var(--nc-space-1);
+  color: var(--nc-text);
+}
+
+.nc__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.nc__actions button {
+  margin-inline: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--nc-border);
+  background: var(--nc-bg);
+  cursor: pointer;
+  transition: transform 150ms ease, box-shadow 150ms ease, background-color 150ms ease, border-color 150ms ease;
+}
+.nc__actions button:hover { transform: translateY(-0.0625rem); }
+.nc__actions button:active { transform: translateY(0); }
+.nc__actions button:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem var(--nc-focus);
+}
+
+.nc__list {
+  display: grid;
+  gap: var(--nc-space-2);
+  margin-top: var(--nc-space-2);
+}
+
+.nc__item {
+  display: flex;
+  gap: var(--nc-space-2);
+  padding: var(--nc-space-2);
+  border: 1px solid var(--nc-border);
+  border-radius: var(--nc-radius);
+  background: var(--nc-bg);
+  transition: background-color 150ms ease, border-color 150ms ease, transform 150ms ease;
+}
+.nc__item:hover { transform: translateY(-0.0625rem); }
+.nc__item[aria-selected="true"] { border-color: rgba(59,130,246,.35); }
+
+.nc__icon {
+  width: var(--nc-icon);
+  height: var(--nc-icon);
+  border-radius: 0.5rem;
+  flex: 0 0 var(--nc-icon);
+  background: #f3f4f6;
+}
+
+.nc__body h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+  line-height: 1.4;
+  font-weight: 600;
+}
+.nc__body p {
+  margin: 0 0 0.25rem;
+  color: var(--nc-muted);
+}
+
+.nc__empty {
+  text-align: center;
+  color: var(--nc-muted-2);
+  padding: 2rem 0;
+}
+
+/* Тёмная тема: через media и/или класс .dark на корне */
+@media (prefers-color-scheme: dark) {
+  .nc {
+    --nc-border: #374151;
+    --nc-bg: #111827;
+    --nc-text: #e5e7eb;
+    --nc-muted: #9ca3af;
+    --nc-muted-2: #9ca3af;
+    --nc-focus: rgba(96, 165, 250, 0.45);
+  }
+  .nc__icon { background: #1f2937; }
+}
+:root.dark .nc,
+.dark .nc {
+  --nc-border: #374151;
+  --nc-bg: #111827;
+  --nc-text: #e5e7eb;
+  --nc-muted: #9ca3af;
+  --nc-muted-2: #9ca3af;
+  --nc-focus: rgba(96, 165, 250, 0.45);
+}
+.dark .nc__icon { background: #1f2937; }
+
+/* Меньше анимаций по системной настройке */
+@media (prefers-reduced-motion: reduce) {
+  .nc__actions button,
+  .nc__item { transition: none; }
+}
