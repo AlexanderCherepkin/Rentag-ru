@@ -29,38 +29,22 @@
   ],
   "dataGroups": [
     {
-      "name": "api-prod",
-      "urls": [
-        "https://api.rentag.ru/**"
-      ],
-      "cacheConfig": {
-        "strategy": "freshness",
-        "maxSize": 100,
-        "maxAge": "1h",
-        "timeout": "10s"
-      }
-    },
-    {
-      "name": "api-mock-dev",
-      "urls": [
-        "http://localhost:5051/**"
-      ],
-      "cacheConfig": {
-        "strategy": "performance",
-        "maxSize": 50,
-        "maxAge": "10m",
-        "timeout": "5s"
-      }
-    },
-    {
       "name": "api-same-origin",
-      "urls": [
-        "/api/**"
-      ],
+      "urls": [ "/api/**" ],
       "cacheConfig": {
         "strategy": "freshness",
         "maxSize": 50,
         "maxAge": "30m",
+        "timeout": "5s"
+      }
+    },
+    {
+      "name": "api-mock-dev",
+      "urls": [ "http://localhost:5050/**" ],
+      "cacheConfig": {
+        "strategy": "performance",
+        "maxSize": 50,
+        "maxAge": "10m",
         "timeout": "5s"
       }
     }
@@ -71,6 +55,3 @@
     "!/api/**"
   ]
 }
-
-
-

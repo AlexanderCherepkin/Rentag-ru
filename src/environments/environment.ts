@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  PUSH_PUBLIC_VAPID_KEY: 'PASTE_YOUR_VAPID_PUBLIC_KEY',
-  BACKEND_PUSH_URL: 'http://localhost:4000/api/push-subscriptions',
-  BACKEND_TEST_PUSH: 'http://localhost:4000/api/push-test'
+  PUSH_PUBLIC_VAPID_KEY: 'BEVsz7TEILa8jzr6X2v-YxmnJpKKzCsji7Iokz6j-AYNrsmQAfm97meRyAMT4hwCkCSGKtftu5p3ChvCw7YAnFQ',
+  BACKEND_PUSH_URL: 'http://localhost:5050/api/push-subscriptions',
+  BACKEND_TEST_PUSH: 'http://localhost:5050/api/push-test'
 };
