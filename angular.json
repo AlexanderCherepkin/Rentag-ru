@@ -67,38 +67,28 @@
           },
           "defaultConfiguration": "development"
         },
-
-        "serve": {
+          "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
-          "options": {
-            "browserTarget": "webapp:build:development"
-          },
           "configurations": {
-            "production":  { "browserTarget": "webapp:build:production"  },
-            "development": { "browserTarget": "webapp:build:development" }
+            "production":  { "buildTarget": "webapp:build:production" },
+            "development": { "buildTarget": "webapp:build:development" }
           },
           "defaultConfiguration": "development"
         },
-
         "serve-ssr": {
           "builder": "@angular-devkit/build-angular:ssr-dev-server",
-          "options": {
-            "browserTarget": "webapp:build:development",
-            "serverTarget":  "webapp:server:development"
-          },
           "configurations": {
-            "production":  {
+            "production": {
               "browserTarget": "webapp:build:production",
-              "serverTarget":  "webapp:server:production"
+              "serverTarget": "webapp:server:production"
             },
             "development": {
               "browserTarget": "webapp:build:development",
-              "serverTarget":  "webapp:server:development"
+              "serverTarget": "webapp:server:development"
             }
           },
           "defaultConfiguration": "development"
         },
-
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": { "buildTarget": "webapp:build" }
